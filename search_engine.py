@@ -1,8 +1,14 @@
 #-------------------------------------------------------------------------
 # AUTHOR: Chi Le
 # FILENAME: search_py
-# SPECIFICATION: This program performs text transformation and indexing in documents. It then builds tf-idf weights matrix,
-# calculate document scores and and calculates precision and recall based on query provided.
+# SPECIFICATION:
+# This program performs search engine tasks such as text transformation, indexing, scoring on documents.
+# It returns:
+# 1. Transformed documents
+# 2. Index terms
+# 3. tf-idf weights matrix
+# 4. Document score for each document
+# 5. Hits, Noises, Misses, Rejected, Recall & Precision
 # FOR: CS 4250- Assignment #1
 # TIME SPENT: 4 hours;
 #-----------------------------------------------------------*/
@@ -71,37 +77,37 @@ df = {term: 0 for term in terms}
 idf = {term: 0 for term in terms}
 tf_idf_weight = {}
 
-#Term count
+#Step 1: Term count
 for i, document in enumerate(transformed_documents):
     term_count[i] = {}
     total_term_count[i] =  0
     for term in terms:
         term_count[i][term] = document.count(term)
         total_term_count[i] += term_count[i][term]
-#Calculate document frequency: df(t, D) = occurrence of t in documents D
+#Step 2: Calculate document frequency: df(t, D) = occurrence of t in documents D
 for document in term_count.keys():
     for term in terms:
         if(term_count[document][term] > 0):
             df[term] += 1
 
-#Calculate inverse document frequency: idf(t, D) = log(|D| / df(t,D))
+#Step 3: Calculate inverse document frequency: idf(t, D) = log(|D| / df(t,D))
 for document in term_count.keys():
     for term in terms:
         idf[term] = round(math.log10(len(term_count)/df[term]),4)
 
-#Calculate term frequency for each document: f(t,d) = count of t in d / number of terms in d
+#Step 4: Calculate term frequency for each document: f(t,d) = count of t in d / number of terms in d
 for document in term_count.keys():
     tf[document] = {}
     for term in terms:
         tf[document][term] = round(term_count[document][term] / total_term_count[document],4)
 
-#Calculate tf-idf weight: tf-idf(t, d, D) = tf(t, d) * idf(t, D)
+#Step 5: Calculate tf-idf weight: tf-idf(t, d, D) = tf(t, d) * idf(t, D)
 for document in tf.keys():
     tf_idf_weight[document] = {}
     for term in terms:
         tf_idf_weight[document][term] = round(tf[document][term] * idf[term],4)
 
-#Build and print matrix
+#Step 6: Build and print matrix
 for i, document in enumerate(tf_idf_weight, 1):
     row = [f'Document {i}']
     for term in terms:
